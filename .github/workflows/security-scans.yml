@@ -1,23 +1,25 @@
+# Ensure 'semgrep_sast_scan' has no leading spaces
 semgrep_sast_scan:
   name: Semgrep SAST Scan
   runs-on: ubuntu-latest
   steps:
-    # Step 1: Check out the repository's code
+    # Step 1: Check out the code
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # Step 2: Run the Semgrep SAST scan using its official Docker image
+    # Step 2: Run the Semgrep SAST scan
     - name: Run Semgrep Scan
+      # 'run:' must be indented exactly under 'name:'
       run: |
-        docker run --rm -v "$(pwd):/src" semgrep/semgrep semgrep scan /src --json -o semgrep-results.json [cite: 37]
+        docker run --rm -v "$(pwd):/src" semgrep/semgrep semgrep scan /src --json -o semgrep-results.json
 
-    # Provide a better view of the output in the GitHub logs
+    # Step 3: Pretty-print the JSON output
     - name: Pretty-print Semgrep JSON
-      [cite_start]run: jq . semgrep-results.json [cite: 40]
+      run: jq . semgrep-results.json
 
-    # Step 3: Upload the JSON report as a build artifact
+    # Step 4: Upload the JSON report
     - name: Upload Semgrep results
-      [cite_start]uses: actions/upload-artifact@v4 [cite: 44]
+      uses: actions/upload-artifact@v4
       with:
-        [cite_start]name: semgrep-results [cite: 46]
-        [cite_start]path: semgrep-results.json [cite: 47]
+        name: semgrep-results
+        path: semgrep-results.json
